@@ -1,0 +1,7 @@
+<isif condition="${transactionPossiblePaymentMethod.state === 'ACTIVE'}">
+    <li class="nav-item WEAREPLANET-nav-item-${transactionPossiblePaymentMethod.id}" data-method-id="WEAREPLANET">
+        <a class="nav-link weareplanet-tab" data-toggle="tab" href="${'#'}weareplanet-content-${transactionPossiblePaymentMethod.id}" role="tab" data-id="${transactionPossiblePaymentMethod.id}" title="${transactionPossiblePaymentMethod.name}">
+            <img alt="${transactionPossiblePaymentMethod.name}" class="credit-card-option" height="32" src="${transactionPossiblePaymentMethod.resolvedImageUrl}" title="${transactionPossiblePaymentMethod.name}">
+        </a>
+    </li>
+</isif>

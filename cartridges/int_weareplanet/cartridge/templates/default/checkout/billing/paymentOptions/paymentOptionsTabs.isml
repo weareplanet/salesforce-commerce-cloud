@@ -1,0 +1,18 @@
+<isloop items="${pdict.order.billing.payment.applicablePaymentMethods}" status="loopState" var="paymentOption">
+    <isif condition="${paymentOption.ID === 'WEAREPLANET'}">
+        <isscript>
+            var assets = require('*/cartridge/scripts/assets.js');
+            assets.addJs(pdict.weareplanet.javascriptUrl);
+            assets.addJs('/js/weareplanet.js');
+        </isscript>
+        <!-- WEAREPLANET Begin -->
+        <input type="hidden" class="form-control" name="WEAREPLANET_url" value="${dw.web.URLUtils.url('WeArePlanet-TransactionUpdate').toString()}">
+        <isloop items="${pdict.weareplanet.transactionPossiblePaymentMethods}" status="loopState" var="transactionPossiblePaymentMethod">
+            <isinclude template="weareplanet/checkout/billing/paymentOptions/weArePlanetTab"/>
+        </isloop>
+        <!-- WEAREPLANET End -->
+    </isif>
+    <isif condition="${paymentOption.ID === 'CREDIT_CARD'}">
+        <isinclude template="checkout/billing/paymentOptions/creditCardTab"/>
+    </isif>
+</isloop>

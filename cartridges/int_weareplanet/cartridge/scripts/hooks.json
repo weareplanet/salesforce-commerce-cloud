@@ -1,0 +1,12 @@
+{
+  "hooks": [
+    {
+      "name": "app.payment.processor.weareplanet",
+      "script": "./hooks/payment/processor/weareplanet"
+    },
+    {
+      "name": "app.payment.form.processor.weareplanet",
+      "script": "./hooks/payment/processor/weareplanet"
+    }
+  ]
+}

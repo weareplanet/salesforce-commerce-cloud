@@ -1,0 +1,10 @@
+<isif condition="${transactionPossiblePaymentMethod.state === 'ACTIVE'}">
+    <div class="tab-pane weareplanet-content weareplanet-content-${transactionPossiblePaymentMethod.id}" id="weareplanet-content-${transactionPossiblePaymentMethod.id}" data-id="${transactionPossiblePaymentMethod.id}" role="tabpanel">
+        <fieldset class="payment-form-fields">
+            <input type="hidden" class="form-control" name="WEAREPLANET_handler" value="">
+            <input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}" value="WEAREPLANET">
+            <input type="hidden" class="form-control" name="WEAREPLANET_handler_name" value="${transactionPossiblePaymentMethod.name}">
+            <div id="weareplanet-form-${transactionPossiblePaymentMethod.id}"></div>
+        </fieldset>
+    </div>
+</isif>

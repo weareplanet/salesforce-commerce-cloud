@@ -1,0 +1,8 @@
+<isloop items="${pdict.order.billing.payment.applicablePaymentMethods}" status="loopState" var="paymentOption">
+	<isif condition="${paymentOption.ID === 'WEAREPLANET'}">
+		<isloop items="${pdict.weareplanet.transactionPossiblePaymentMethods}" status="loopState" var="transactionPossiblePaymentMethod">
+			<isinclude template="weareplanet/checkout/billing/paymentOptions/weArePlanetContent" /></isloop>
+	</isif>
+</isloop>
+
+<isinclude template="checkout/billing/paymentOptions/creditCardContent" />
