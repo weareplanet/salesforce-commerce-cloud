@@ -5,7 +5,7 @@ function getPreferences() {
         var customPreferences = dw.object.CustomObjectMgr.getCustomObject("WeArePlanet_Common", "weareplanet_common");
         return {
             spaceId: customPreferences.custom.spaceId,
-            serviceName: "int_weareplanet.http.rest.payment.weareplanet",
+            serviceName: "int_weareplanet.http.nvp.payment.weareplanet.SiteGenesis",
             macVersion: 1,
             userId: customPreferences.custom.userId,
             apiSecret: customPreferences.custom.apiSecret

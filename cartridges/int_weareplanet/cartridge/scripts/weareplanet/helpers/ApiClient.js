@@ -21,7 +21,7 @@ var ApiClient = /** @class */ (function () {
                 }
             });
         };
-        var service = httpService('int_weareplanet.http.rest.payment.weareplanet');
+        var service = httpService('int_weareplanet.http.nvp.payment.weareplanet.SiteGenesis');
         service.call();
         return service.client;
     };
