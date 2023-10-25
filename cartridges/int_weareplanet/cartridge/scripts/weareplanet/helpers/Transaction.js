@@ -1,6 +1,7 @@
 "use strict";
 /* global dw empty session */
 
+exports.Transaction = void 0;
 var WeArePlanet = require("~/cartridge/scripts/weareplanet/sdk/index");
 /**
  * Transaction Helper
@@ -32,27 +33,47 @@ var Transaction = /** @class */ (function () {
         shippingLineItem.sku = WeArePlanet.model.LineItemType.SHIPPING;
         shippingLineItem.quantity = 1;
         shippingLineItem.taxes = this.getShippingTax();
-        shippingLineItem.amountIncludingTax = (this.currentBasket.shippingTotalPrice.getValue() + this.currentBasket.shippingTotalTax.getValue()).toFixed(2);
+        shippingLineItem.amountIncludingTax = (this.currentBasket.shippingTotalPrice.getValue()).toFixed(2);
         shippingLineItem.type = WeArePlanet.model.LineItemType.SHIPPING;
         data.push(shippingLineItem);
+        var allItemsList = this.currentBasket.getAllLineItems().iterator();
+        while (allItemsList.hasNext()) {
+            // @ts-ignore
+            var couponLineItem = allItemsList.next();
+            // @ts-ignore
+            if (!couponLineItem instanceof dw.order.PriceAdjustment) {
+                continue;
+            }
+            if (couponLineItem.getPriceValue() < 0) {
+                var lineItem = new WeArePlanet.model.LineItemCreate();
+                lineItem.name = couponLineItem.getLineItemText();
+                lineItem.uniqueId = "COUPON-" + couponLineItem.getLineItemText() + dw.util.UUIDUtils.createUUID();
+                lineItem.quantity = 1;
+                lineItem.taxes = 0;
+                lineItem.amountIncludingTax = couponLineItem.getPriceValue();
+                lineItem.type = WeArePlanet.model.LineItemType.DISCOUNT;
+                data.push(lineItem);
+            }
+        }
         var productLineItems = this.currentBasket.getAllProductLineItems().iterator();
         while (productLineItems.hasNext()) {
-            var lineItem = new WeArePlanet.model.LineItemCreate();
+            var lineItem_1 = new WeArePlanet.model.LineItemCreate();
             var productLineItem = productLineItems.next();
-            lineItem.name = productLineItem.productName;
-            lineItem.uniqueId = productLineItem.productID + "-" + dw.util.UUIDUtils.createUUID();
-            lineItem.sku = productLineItem.manufacturerSKU;
-            lineItem.quantity = productLineItem.quantityValue;
-            lineItem.taxes = this.getLineItemTax(productLineItem);
-            lineItem.amountIncludingTax = (productLineItem.getPriceValue() + productLineItem.adjustedTax.getValue()).toFixed(2);
-            lineItem.type = WeArePlanet.model.LineItemType.PRODUCT;
-            data.push(lineItem);
+            var productPrice = productLineItem.getPriceValue();
+            lineItem_1.name = productLineItem.productName;
+            lineItem_1.uniqueId = productLineItem.productID + "-" + dw.util.UUIDUtils.createUUID();
+            lineItem_1.sku = productLineItem.manufacturerSKU;
+            lineItem_1.quantity = productLineItem.quantityValue;
+            lineItem_1.taxes = this.getLineItemTax(productLineItem);
+            lineItem_1.amountIncludingTax = productPrice.toFixed(2);
+            lineItem_1.type = WeArePlanet.model.LineItemType.PRODUCT;
+            data.push(lineItem_1);
         }
         return data;
     };
     Transaction.prototype.getShippingTax = function () {
         var taxArray = [];
-        var totalPrice = this.currentBasket.shippingTotalPrice.getValue() + this.currentBasket.shippingTotalTax.getValue();
+        var totalPrice = this.currentBasket.shippingTotalPrice.getValue();
         var taxRate = (this.currentBasket.shippingTotalTax.getValue() / totalPrice).toFixed(2);
         var tax = new WeArePlanet.model.TaxCreate();
         tax.rate = parseFloat(taxRate) * 100;
@@ -136,6 +157,7 @@ var Transaction = /** @class */ (function () {
             var transaction = new WeArePlanet.model.TransactionCreate();
             transaction.lineItems = transactionLineItems;
             transaction.currency = this.currentBasket.getCurrencyCode();
+            transaction.language = session.custom.language;
             transaction.billingAddress = empty(billingAddress) ? shippingAddress : billingAddress;
             transaction.shippingAddress = shippingAddress;
             transaction.autoConfirmationEnabled = true;
@@ -192,8 +214,7 @@ var Transaction = /** @class */ (function () {
         if (this.isOldSession()) {
             var transaction = this.getTransactionById(this.spaceId, session.custom.WeArePlanetTransactionId);
             transaction.billingAddress = address;
-            var transactionUpdate = this.TransactionService.update(this.spaceId, transaction);
-            return this.getPaymentVariableData(transactionUpdate);
+            return transaction;
         }
         return {
             error: true,
@@ -223,8 +244,7 @@ var Transaction = /** @class */ (function () {
             var transaction = this.getTransactionById(this.spaceId, session.custom.WeArePlanetTransactionId);
             transaction.shippingAddress = address;
             transaction.billingAddress = address;
-            var transactionUpdate = this.TransactionService.update(this.spaceId, transaction);
-            return this.getPaymentVariableData(transactionUpdate);
+            return transaction;
         }
         return {
             error: true,
@@ -254,7 +274,7 @@ var Transaction = /** @class */ (function () {
         var transaction = this.getTransactionById(this.spaceId, session.custom.WeArePlanetTransactionId);
         transaction.metaData = data;
         transaction.successUrl = dw.web.URLUtils.abs("Order-WeArePlanetConfirm", "ID", data.orderID, "token", data.orderToken).toString();
-        transaction.failedUrl = transaction.successUrl;
+        transaction.failedUrl = dw.web.URLUtils.abs("Order-WeArePlanetFail").toString();
         transaction.merchantReference = data.orderID;
         this.TransactionService.update(this.spaceId, transaction);
     };
@@ -291,14 +311,11 @@ var Transaction = /** @class */ (function () {
         };
     };
     /**
-     * Get WebHook Listener
-     * TODO This should be called only once in a shop
-     * @return { WeArePlanet.model.WebhookListener }
+     *
+     * @param { WeArePlanet.model.Transaction } transaction
      */
-    Transaction.prototype.getWebHook = function () {
-        var WebHookHelper = new (require("~/cartridge/scripts/weareplanet/helpers/WebHook"));
-        WebHookHelper.getTransactionListener();
-        WebHookHelper.getRefundListener();
+    Transaction.prototype.updateTransaction = function (transaction) {
+        this.TransactionService.update(this.spaceId, transaction);
     };
     /**
      * Get WeArePlanet.model.Transaction by id

@@ -1,6 +1,7 @@
 "use strict";
 /* global dw empty */
 
+exports.ApiClient = void 0;
 /**
  * API Client that is passed on to the WeArePlanet SDK service classes
  */
@@ -21,7 +22,7 @@ var ApiClient = /** @class */ (function () {
                 }
             });
         };
-        var service = httpService('int_weareplanet.http.nvp.payment.weareplanet.SiteGenesis');
+        var service = httpService('int_weareplanet.http.rest.payment.weareplanet');
         service.call();
         return service.client;
     };
