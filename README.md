@@ -51,7 +51,7 @@ Installation, Usage and Configuration is explained in WeArePlanet's [online docu
 
 ## Support
 
-For further questions regarding the integration to WeArePlanet, contact the [WeArePlanet Support](https://paymentshub.weareplanet.com/space/select?target=/support).
+For support queries please contact [WeArePlanet support](mailto:support@datatrans.ch?subject=Support%20on%20Salesforce%20Commerce%20Cloud%20-%20Topic%3A).
 
 ## License
 
