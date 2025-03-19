@@ -7,6 +7,7 @@
         </isscript>
         <!-- WEAREPLANET Begin -->
         <input type="hidden" class="form-control" name="WEAREPLANET_url" value="${dw.web.URLUtils.url('WeArePlanet-TransactionUpdate').toString()}">
+        <input type="hidden" class="form-control" name="WEAREPLANET_integrationType" value="${pdict.weareplanet.integrationType}">      
         <isloop items="${pdict.weareplanet.transactionPossiblePaymentMethods}" status="loopState" var="transactionPossiblePaymentMethod">
             <isinclude template="weareplanet/checkout/billing/paymentOptions/weArePlanetTab"/>
         </isloop>

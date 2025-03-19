@@ -47,7 +47,7 @@ Congratulations! You are now integrated with WeArePlanet.
 
 ## Installation, Usage and Configuration
 
-Installation, Usage and Configuration is explained in WeArePlanet's [online documentation](https://plugin-documentation.weareplanet.com/weareplanet/salesforce-commerce-cloud/1.0.15/docs/en/documentation.html).
+Installation, Usage and Configuration is explained in WeArePlanet's [online documentation](https://plugin-documentation.weareplanet.com/weareplanet/salesforce-commerce-cloud/1.0.16/docs/en/documentation.html).
 
 ## Support
 
